@@ -42,6 +42,10 @@ INSTALLED_APPS = [
 
     #rest-framework
     'rest_framework',
+    'rest_framework.authtoken',
+
+    #rest-auth
+    'rest_auth',
 
     #myapps
     'posts',
@@ -121,3 +125,9 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES' : [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
