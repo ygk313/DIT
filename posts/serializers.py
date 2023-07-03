@@ -25,14 +25,20 @@ class CommentSerializer(BaseCommentSerializer):
 class PostSerializer(BasePostSerializer):
     title = serializers.CharField(required=False)
     content = serializers.CharField(required=False)
-    comments = BaseCommentSerializer(many=True, read_only=True)
+    comment_set = BaseCommentSerializer(many=True, read_only=True)
     
     class Meta:
         model = Post
         fields =  "__all__"
 
-#  get Posts liked by user
-class LikeSerializer(serializers.ModelSerializer):
+#  BaseLikeSerializer
+class BaseLikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
+        fields = '__all__'
+
+# LikeSerializer
+class LikeSerializer(BaseLikeSerializer):
     post = PostSerializer(read_only=True)
     
     class Meta:

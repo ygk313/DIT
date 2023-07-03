@@ -8,5 +8,7 @@ urlpatterns = [
     path('<int:pk>', views.PostDetailView.as_view()),
     path('my-posts', views.MyPostView.as_view()),
     path('my-likes', views.LikedPostView.as_view()),
+    path('like-toggle/<int:pk>', views.LikeToggleView.as_view()),
     path('my-comments', views.CommentsPostView.as_view()),
+    path('my-comments/<int:pk>', views.CommentDetailView.as_view()),
 ]

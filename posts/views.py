@@ -1,4 +1,5 @@
 from django.db.models.fields.related import RECURSIVE_RELATIONSHIP_CONSTANT
+from django.shortcuts import get_object_or_404
 from django.http.response import Http404
 from .models import Post, Like, Comment
 from .serializers import *
@@ -7,6 +8,8 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from posts import serializers
+
+# ----- Posts Area ------
 
 # main에 돌려주기 위해 필요한 view
 class MainPostView(APIView):
@@ -65,6 +68,8 @@ class MyPostView(APIView):
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
 
+# ----- Likes Area ------
+
 # Posts user liked
 class LikedPostView(APIView):
 
@@ -73,6 +78,20 @@ class LikedPostView(APIView):
         serializer = LikeSerializer(likes, many=True)
 
         return Response(serializer.data)
+
+class LikeToggleView(APIView):
+    
+    def post(self, request, pk, format=None):
+        post = get_object_or_404(Post, pk=pk)
+        post_like, post_like_created = post.like_set.get_or_create(user=request.user)
+
+        if post_like_created:
+            return Response("like", status = status.HTTP_201_CREATED)
+        else:
+            post_like.delete()
+            return Response("unllike", status = status.HTTP_404_NOT_FOUND)
+
+# ----- Comments Area ------
 
 # Posts user commented
 class CommentsPostView(APIView):
@@ -90,3 +109,12 @@ class CommentsPostView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
     
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+# comment - DELETE
+class CommentDetailView(APIView):
+
+    def delete(self, request, pk, format = None):
+        comment = get_object_or_404(Comment, pk=pk)
+        comment.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
