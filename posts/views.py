@@ -1,7 +1,7 @@
 from django.db.models.fields.related import RECURSIVE_RELATIONSHIP_CONSTANT
 from django.http.response import Http404
-from .models import Post, Like
-from .serializers import LikeSerializer, PostSerializer
+from .models import Post, Like, Comment
+from .serializers import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -65,7 +65,7 @@ class MyPostView(APIView):
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
 
-# Posts users liked
+# Posts user liked
 class LikedPostView(APIView):
 
     def get(self, request, format=None):
@@ -73,3 +73,20 @@ class LikedPostView(APIView):
         serializer = LikeSerializer(likes, many=True)
 
         return Response(serializer.data)
+
+# Posts user commented
+class CommentsPostView(APIView):
+
+    def get(self, request, format=None):
+        comments = Comment.objects.filter(user=request.user)
+        serializer = CommentSerializer(comments, many=True)
+
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = BaseCommentSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+        return Response(status=status.HTTP_400_BAD_REQUEST)
