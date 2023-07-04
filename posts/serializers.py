@@ -1,4 +1,6 @@
+
 from rest_framework import serializers
+from rest_framework.fields import CurrentUserDefault
 from .models import Like, Post, Comment
 
 # BasePostSerializer
@@ -30,6 +32,18 @@ class PostSerializer(BasePostSerializer):
     class Meta:
         model = Post
         fields =  "__all__"
+
+# Create Post 
+class PostCreateSerializer(BasePostSerializer):
+    title = serializers.CharField()
+    content = serializers.CharField(required=False)
+    image = serializers.ImageField(required=False)
+
+    class Meta:
+        model = Post
+        fields = ['id', 'title', 'content', 'image', 'user']
+
+
 
 #  BaseLikeSerializer
 class BaseLikeSerializer(serializers.ModelSerializer):

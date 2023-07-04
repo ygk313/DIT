@@ -14,6 +14,9 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def summary(self):
+        return self.content[:25]
+        
     @property
     def comments(self):
         return Comment.objects.filter(post=self)

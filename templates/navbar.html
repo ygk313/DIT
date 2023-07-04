@@ -1,0 +1,37 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-light" style="font-family:SDKukdetopokki-Lt; margin-top:2%;margin-left:10%;margin-right:10%;">
+    <a class="navbar-brand" href="{% url 'main' %}"><h1>DLIT</h1></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav col" style="text-align:center;">
+            {% if request.user.is_authenticated %}
+                <li class="nav-item" style="font-family:SDKukdetopokki-Lt;">
+                    <p><h5>{{ request.user.username }} 님</h5></p>
+                </li>
+                &nbsp;
+                <li class="nav-item" style="font-family:SDKukdetopokki-Lt;">
+                    <p><a class="nav-link" href="{% url 'posts:my_posts' %}"><h5>나의 목록</h5></a></p>
+                </li>
+                <li class="nav-item" style="font-family:SDKukdetopokki-Lt;">
+                    <p><a class="nav-link" href="{% url 'posts:my_likes' %}"><h5>나의 좋아요</h5></a></p> 
+                </li>
+                <li class="nav-item">
+                    <p><a class = "nav-link" href="{% url 'posts:my_comments_list' %}"><h5>나의 댓글</h5></a></p>
+                </li>
+                <li class="nav-item">
+                    <p><a class = "nav-link" href="{% url 'posts:post_create' %}"><h5>작성하기</h5></a></p>
+                </li>
+                <li class="nav-item">
+                    <p><a class = "nav-link" href="{% url 'rest_logout'%}"><h5>로그아웃</h5></a></p>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <p><a  class="nav-link" href="{% url 'rest_login' %}" >로그인</a></p>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+<hr color="black" width="88%" style="margin-top:0px;">

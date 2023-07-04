@@ -1,32 +1,50 @@
+from django.contrib.auth import login
 from django.db.models.fields.related import RECURSIVE_RELATIONSHIP_CONSTANT
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.http.response import Http404
 from .models import Post, Like, Comment
 from .serializers import *
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, permissions
+from rest_framework.renderers import TemplateHTMLRenderer
 
-from posts import serializers
+import pdb
+
 
 # ----- Posts Area ------
 
 # main에 돌려주기 위해 필요한 view
 class MainPostView(APIView):
 
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name= 'main.html'
+
     def get(self, request, format=None):
-        post = Post.objects.all()
-        serializer = PostSerializer(post,many=True)
+        posts = Post.objects.all()
+        # serializer = PostSerializer(posts,many=True)
 
-        return Response(serializer.data)
+        return Response({'posts':posts})
     
-    def post(self, request, format=None):
-        serializer = PostSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+# Create 페이지 반환하고 저장하는 곳 한개
+class PostCreateView(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'posts/create.html'
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, format=None):
+        serializer = PostSerializer()
+        return Response({'serializer':serializer})
+
+    def post(self, request, format=None):
+        serializer = PostCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return redirect('posts:post_detail', serializer.data['id'])
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 # pk에 따른 Post 디테일 내용을 확인하기 위한 View
 class PostDetailView(APIView):
