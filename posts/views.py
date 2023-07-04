@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.http.response import Http404
 from .models import Post, Like, Comment
 from .serializers import *
+from django.contrib.auth.decorators import login_required
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
@@ -49,6 +50,9 @@ class PostCreateView(APIView):
 # pk에 따른 Post 디테일 내용을 확인하기 위한 View
 class PostDetailView(APIView):
 
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'posts/detail.html'
+
     def get_object(self, pk):
         try:
             return Post.objects.get(pk=pk)
@@ -57,8 +61,8 @@ class PostDetailView(APIView):
     
     def get(self, request, pk, format=None):
         post = self.get_object(pk)
-        serializer = PostSerializer(post)
-        return Response(serializer.data)
+        # serializer = PostSerializer(post)
+        return Response({'post':post})
 
     # 일부 업데이트를 위해 PATCH 사용.
     def patch(self, request, pk, format=None):
@@ -113,7 +117,8 @@ class LikeToggleView(APIView):
 
 # Posts user commented
 class CommentsPostView(APIView):
-
+    permissions.SAFE_METHODS = ['POST']
+    
     def get(self, request, format=None):
         comments = Comment.objects.filter(user=request.user)
         serializer = CommentSerializer(comments, many=True)
@@ -123,16 +128,25 @@ class CommentsPostView(APIView):
     def post(self, request, format=None):
         serializer = BaseCommentSerializer(data = request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
     
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 # comment - DELETE
 class CommentDetailView(APIView):
+    http_method_names = ['get', 'post', 'put', 'delete']
+
+    def dispatch(self, *args, **kwargs):
+        method = self.request.POST.get('_method', '').lower()
+        if method == 'put':
+            return self.put(*args, **kwargs)
+        if method == 'delete':
+            return self.delete(*args, **kwargs)
+        return super(CommentDetailView, self).dispatch(*args, **kwargs)
 
     def delete(self, request, pk, format = None):
         comment = get_object_or_404(Comment, pk=pk)
         comment.delete()
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return redirect('posts:post_detail', comment.post.pk)

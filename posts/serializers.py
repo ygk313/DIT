@@ -15,6 +15,7 @@ class BaseCommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
 
+
 # get Posts commented by user
 class CommentSerializer(BaseCommentSerializer):
     post = BasePostSerializer(read_only=True)
