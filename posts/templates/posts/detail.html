@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block content %}
+    <div class="container" style="width:88%;margin-left:12%; margin-right:4%;padding-left:0;font-family:SDKukdetopokki-Lt;">
+        
+        <div class="title" style="padding-top:3%; width:85%;">
+            <h1>{{post.title}}</h1>
+        </div>
+
+        <div align="right" class="box" style="padding-right:15%;">
+            {% if request.user.is_authenticated %}
+                <div class="alt-serv ice-item" id ="like_toggle">
+                    <span href="#" class="like" name ="{{posts_pk}}" value="Like">
+                        {% if request.user in post.liked_users.all %}
+                        
+                        <div class="alt-service-icon">
+                            <i class="fas fa-heart" id ="like-icon"></i>
+                            <!-- <button type="button" class="btn btn-success" id ="like-icon">좋아요 취소</button> -->
+                        </div>
+                        
+                        {% else %}
+                        
+                        <div class="alt-service-icon">
+                            <i class="far fa-heart" id ="like-icon"></i>
+                            <!-- <button type="button" class="btn btn-danger" id ="like-icon">좋아요</button> -->
+                        </div>
+                        {% endif %}
+                        
+                        {% if request.user == post.user %}
+                        <span id="count-{{ post.id }}" class="alt-services-title font-alt">
+                            좋아요{{ post.like_counts }}개
+                        </span>
+                        {% endif %}
+                    </span>   
+                </div>
+            {% endif %}
+            <h6>글쓴이: {{post.user.username}}</h6>
+        </div>
+    </div>
+    <hr width="80%">
+    <div class="container" style="margin-left:12%; width:88%; margin-right:4%;padding-left:0;font-family:MapoPeacefull;">
+        <div>
+            <h5 style="padding-right:15%;;">
+                {{ post.content | linebreaksbr }}
+            </h5>
+        </div>
+
+        <div class="box" style="width:88%;">
+            {% if post.image == '' %}
+                <h6>첨부파일 없음 </h6>
+            {% else %}
+                <span>
+                    <a id="id_uploaded_file" href="{{post.image.url}}" download> 첨부파일: {{ post.image.name }}</a>
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div align="right" class="box" >
+
+        <hr width=100%>
+        <h5 style="text-align:center;"> ♪Comments♪ </h5>
+        <hr width=100%>
+        
+        {% if request.user.is_authenticated %}
+        <div class="container" style="margin-left:12%; width:88%; margin-right:4%;padding-left:0;font-family:MapoPeacefull;">
+            <form action="{% url 'posts:my_comments_list' %}" method="POST" style="margin-top: 50px;" class="create-comment-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <textarea  class="form-control" name="message"placeholder="댓글 달기..." required></textarea>
+                </div>
+                <input type="hidden" name="post" value = "{{ post.pk }}">
+                <button type="submit" class="btn btn-primary right comment-submit-button">작성</button>
+            </form><br>
+        </div>
+        {% endif %}
+
+        <br>
+        {% if post.comments %}
+        <div class="container" style="width:88%;margin-left:12%; margin-right:4%;padding-left:0;">
+        
+            <ul class="list-group" id="comments-list-{{ posts.pk }}" >
+                {% for comment in post.comments %}
+                    <li class="list-group-item" id="comment-{{ comment.pk }}" style="border-top-width: thin">
+                        <p style="text-align:right;">
+                            <b style="font-size:medium;">작성자 : {{ comment.user.username }}</b>
+
+                                {% if request.user == comment.user %}
+                                    <form id="delete" action="{% url 'posts:my_comments_detail' comment.pk %}" method="post" class="right comment-delete-button">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="_method" value="delete" />
+                                        <input type="submit"class="btn btn-dark" value= "삭제">
+                                    </form>
+                                {% endif %}
+                        </p>
+                        <p style="text-align:justify;font-size:small;">{{ comment.message | linebreaksbr }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}   
+    </div>
+</div>
+{% endblock %}
