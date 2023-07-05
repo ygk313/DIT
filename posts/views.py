@@ -84,11 +84,14 @@ class PostDetailView(APIView):
     
 # Posts written by user
 class MyPostView(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'posts/mylist.html'
+
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, format=None):
         posts = Post.objects.filter(user=request.user)
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data)
+        return Response({'posts':posts})
 
 # ----- Likes Area ------
 
