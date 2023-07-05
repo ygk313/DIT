@@ -120,19 +120,22 @@ class LikeToggleView(APIView):
 
 # Posts user commented
 class CommentsPostView(APIView):
-    permissions.SAFE_METHODS = ['POST']
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'posts/mycomments.html'
+
+    permission_classes = [permissions.IsAuthenticated]
     
     def get(self, request, format=None):
-        comments = Comment.objects.filter(user=request.user)
-        serializer = CommentSerializer(comments, many=True)
-
-        return Response(serializer.data)
+        comment_posts = Comment.objects.filter(user=request.user).values('post').distinct()
+        posts = Post.objects.filter(id__in=comment_posts)
+        return Response({'posts':posts})
 
     def post(self, request, format=None):
         serializer = BaseCommentSerializer(data = request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            post_id = serializer.data.get('post')
+            return redirect('posts:post_detail', post_id)
     
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
