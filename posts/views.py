@@ -23,8 +23,6 @@ class MainPostView(APIView):
 
     def get(self, request, format=None):
         posts = Post.objects.all()
-        # serializer = PostSerializer(posts,many=True)
-
         return Response({'posts':posts})
     
 
@@ -46,21 +44,56 @@ class PostCreateView(APIView):
             return redirect('posts:post_detail', serializer.data['id'])
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+# Post에 대한 수정, 삭제 처리
+class PostActionView(APIView):
+
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'posts/update.html'
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def dispatch(self, *args, **kwargs):
+        method = self.request.POST.get('_method', '').lower()
+
+        if method == 'delete':
+            return self.delete(*args, **kwargs)
+        elif method == 'patch':
+            return self.patch(*args, **kwargs)
+
+        return super(PostActionView, self).dispatch(*args, **kwargs)
+
+    def get_object(self, pk):
+        try:
+            return Post.objects.get(pk=pk)
+        except Post.DoesNotExist:
+            return Http404
+
+    def get(self, request, pk, format=None):
+        post = self.get_object(pk)
+        return Response({'post':post})
+    
+    # 일부 업데이트를 위해 PATCH 사용.
+    def patch(self, request, pk, format=None):
+        post = self.get_object(pk)
+        serializer = PostSerializer(post, data=request.POST)
+
+        # serializer.is_valid()는 들어간 형식이 올바른지 확인하기 위함.
+        if serializer.is_valid():
+            serializer.save()
+            return redirect('posts:post_detail', post.pk)
+    
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, pk, format=None):
+        post = self.get_object(pk)
+        post.delete()
+        return redirect('main')
 
 # pk에 따른 Post 디테일 내용을 확인하기 위한 View
 class PostDetailView(APIView):
 
-    http_method_names = ['get', 'post', 'patch', 'delete']
-
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'posts/detail.html'
-
-    def dispatch(self, *args, **kwargs):
-        method = self.request.POST.get('_method', '').lower()
-        if method == 'delete':
-            return self.delete(*args, **kwargs)
-
-        return super(PostDetailView, self).dispatch(*args, **kwargs)
 
     def get_object(self, pk):
         try:
@@ -71,24 +104,7 @@ class PostDetailView(APIView):
     def get(self, request, pk, format=None):
         post = self.get_object(pk)
         return Response({'post':post})
-
-    # 일부 업데이트를 위해 PATCH 사용.
-    def patch(self, request, pk, format=None):
-        post = self.get_object(pk)
-        serializer = PostSerializer(post, data=request.data)
-
-        # serializer.is_valid()는 들어간 형식이 올바른지 확인하기 위함.
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
     
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    def delete(self, request, pk, format=None):
-        post = self.get_object(pk)
-        post.delete()
-        
-        return redirect('main')
     
 # Posts written by user
 class MyPostView(APIView):
