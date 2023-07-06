@@ -59,12 +59,22 @@
 
     <div align="right" class="box" >
 
+        {% if post.user == request.user %}
+        <div class="container" style="width:88%;padding-left:0;font-family:MapoPeacefull;">
+            <form id="delete" action="{% url 'posts:post_detail' post.pk %}" method="post" class="right comment-delete-button">
+                {% csrf_token %}
+                <input type="hidden" name="_method" value="delete" />
+                <input type="submit"class="btn btn-dark" value= "삭제">
+            </form>
+        </div>
+        {% endif %}
+
         <hr width=100%>
         <h5 style="text-align:center;"> ♪Comments♪ </h5>
         <hr width=100%>
         
         {% if request.user.is_authenticated %}
-        <div class="container" style="margin-left:12%; width:88%; margin-right:4%;padding-left:0;font-family:MapoPeacefull;">
+        <div class="container" style="width:88%;padding-left:0;font-family:MapoPeacefull;">
             <form action="{% url 'posts:my_comments_list' %}" method="POST" style="margin-top: 50px;" class="create-comment-form">
                 {% csrf_token %}
                 <div class="form-group">
@@ -78,7 +88,7 @@
 
         <br>
         {% if post.comments %}
-        <div class="container" style="width:88%;margin-left:12%; margin-right:4%;padding-left:0;">
+        <div class="container" style="width:88%;padding-left:0;">
         
             <ul class="list-group" id="comments-list-{{ posts.pk }}" >
                 {% for comment in post.comments %}

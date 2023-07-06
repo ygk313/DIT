@@ -43,19 +43,3 @@ class PostCreateSerializer(BasePostSerializer):
     class Meta:
         model = Post
         fields = ['id', 'title', 'content', 'image', 'user']
-
-
-
-#  BaseLikeSerializer
-class BaseLikeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Like
-        fields = '__all__'
-
-# LikeSerializer
-class LikeSerializer(BaseLikeSerializer):
-    post = PostSerializer(read_only=True)
-    
-    class Meta:
-        model = Like
-        fields = '__all__'

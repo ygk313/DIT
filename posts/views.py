@@ -50,8 +50,17 @@ class PostCreateView(APIView):
 # pk에 따른 Post 디테일 내용을 확인하기 위한 View
 class PostDetailView(APIView):
 
+    http_method_names = ['get', 'post', 'patch', 'delete']
+
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'posts/detail.html'
+
+    def dispatch(self, *args, **kwargs):
+        method = self.request.POST.get('_method', '').lower()
+        if method == 'delete':
+            return self.delete(*args, **kwargs)
+
+        return super(PostDetailView, self).dispatch(*args, **kwargs)
 
     def get_object(self, pk):
         try:
@@ -61,7 +70,6 @@ class PostDetailView(APIView):
     
     def get(self, request, pk, format=None):
         post = self.get_object(pk)
-        # serializer = PostSerializer(post)
         return Response({'post':post})
 
     # 일부 업데이트를 위해 PATCH 사용.
@@ -80,7 +88,7 @@ class PostDetailView(APIView):
         post = self.get_object(pk)
         post.delete()
         
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return redirect('main')
     
 # Posts written by user
 class MyPostView(APIView):
@@ -98,11 +106,14 @@ class MyPostView(APIView):
 # Posts user liked
 class LikedPostView(APIView):
 
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name= 'posts/mylikes.html'
+    
+    permission_classes = [permissions.IsAuthenticated]
+
     def get(self, request, format=None):
         likes = Like.objects.filter(user = request.user)
-        serializer = LikeSerializer(likes, many=True)
-
-        return Response(serializer.data)
+        return Response({'likes':likes})
 
 class LikeToggleView(APIView):
     
@@ -145,8 +156,6 @@ class CommentDetailView(APIView):
 
     def dispatch(self, *args, **kwargs):
         method = self.request.POST.get('_method', '').lower()
-        if method == 'put':
-            return self.put(*args, **kwargs)
         if method == 'delete':
             return self.delete(*args, **kwargs)
         return super(CommentDetailView, self).dispatch(*args, **kwargs)
