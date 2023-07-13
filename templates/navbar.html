@@ -24,11 +24,11 @@
                     <p><a class = "nav-link" href="{% url 'posts:post_create' %}"><h5>작성하기</h5></a></p>
                 </li>
                 <li class="nav-item">
-                    <p><a class = "nav-link" href="{% url 'rest_logout'%}"><h5>로그아웃</h5></a></p>
+                    <p><a class = "nav-link" href="{% url 'account_logout'%}"><h5>로그아웃</h5></a></p>
                 </li>
             {% else %}
                 <li class="nav-item">
-                    <p><a  class="nav-link" href="{% url 'rest_login' %}" >로그인</a></p>
+                    <p><a  class="nav-link" href="{% url 'account_login' %}" >로그인</a></p>
                 </li>
             {% endif %}
         </ul>
