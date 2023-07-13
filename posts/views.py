@@ -131,17 +131,17 @@ class LikedPostView(APIView):
         likes = Like.objects.filter(user = request.user)
         return Response({'likes':likes})
 
+# Like Toggle Function 처리
 class LikeToggleView(APIView):
     
     def post(self, request, pk, format=None):
         post = get_object_or_404(Post, pk=pk)
         post_like, post_like_created = post.like_set.get_or_create(user=request.user)
-
-        if post_like_created:
-            return Response("like", status = status.HTTP_201_CREATED)
-        else:
+        
+        if not post_like_created:
             post_like.delete()
-            return Response("unllike", status = status.HTTP_404_NOT_FOUND)
+
+        return redirect('posts:post_detail', post.id)
 
 # ----- Comments Area ------
 

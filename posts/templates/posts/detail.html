@@ -10,27 +10,20 @@
 
         <div align="right" class="box" style="padding-right:15%;">
             {% if request.user.is_authenticated %}
+                <form action ="{% url 'posts:like_toggle' post.pk %}" method="POST" enctype="multipart/form-data" novalidate
                 <div class="alt-serv ice-item" id ="like_toggle">
-                    <span href="#" class="like" name ="{{posts_pk}}" value="Like">
+                    <span href="#" class="like" name ="{{post_pk}}" value="Like">
                         {% if request.user in post.liked_users.all %}
                         
                         <div class="alt-service-icon">
-                            <i class="fas fa-heart" id ="like-icon"></i>
-                            <!-- <button type="button" class="btn btn-success" id ="like-icon">좋아요 취소</button> -->
+                            <button type="submit" class="btn btn-success" id ="like-icon">좋아요 취소</button>
                         </div>
                         
                         {% else %}
                         
                         <div class="alt-service-icon">
-                            <i class="far fa-heart" id ="like-icon"></i>
-                            <!-- <button type="button" class="btn btn-danger" id ="like-icon">좋아요</button> -->
+                            <button type="submit" class="btn btn-danger" id ="like-icon">좋아요</button>
                         </div>
-                        {% endif %}
-                        
-                        {% if request.user == post.user %}
-                        <span id="count-{{ post.id }}" class="alt-services-title font-alt">
-                            좋아요{{ post.like_counts }}개
-                        </span>
                         {% endif %}
                     </span>   
                 </div>
