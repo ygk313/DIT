@@ -33,7 +33,7 @@
   </tr>
    <tr>
     <td><b>Deployment</b></td>
-    <td>AWS EC2, RDS, Docker</td>
+    <td>AWS EC2, RDS, Docker, Docker-compose</td>
   </tr>
 <tr>
     <td><b>Other Tool</b></td>
