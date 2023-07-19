@@ -45,15 +45,15 @@
 <br>
 
 ## :two:​ ERD
-<img src='/wiki/ERD.png' width="50%" height="50%">
+<img src='/imgs/ERD.png' width="50%" height="50%">
 <br>
 
 ## :three:​ Flow Chart
-<img src='/wiki/FC.png' width="50%" height="50%">
+<img src='/imgs/FC.png' width="50%" height="50%">
 <br>
 
 ## :four:​ Server Architecture
-<img src='/wiki/SA.png' width="50%" height="50%">
+<img src='/imgs/SA.png' width="50%" height="50%">
 <br>
 
 ## :five:​ 기능 명세
@@ -100,6 +100,19 @@
 
 ## ​:six:​ Deploy Fundamentals
 ```
-💡 Docker를 활용한 배포를 위해 필요한 기초 지식 정리 내용
+💡 Docker를 활용한 배포와 DRF 개발을 위해 필요한 기초 지식 정리 내용
 ```
+[1. REST](https://www.notion.so/thediaryofyj/6-28-REST-d5c74be70008443f9c58c2f9725dfd8c)<br>
 
+[2. WS와 WAS의 차이, Uwsgi와 Nginx](https://www.notion.so/thediaryofyj/6-23-WS-WAS-Uwsgi-Nginx-e03f1b6e0b704e66976c5078c741f03e)<br>
+
+[3. Docker](https://www.notion.so/thediaryofyj/6-24-Docker-c15eeed38d52455a8317fd0f8de52733)<br>
+
+[4. Docker을 활용한 배포](https://www.notion.so/thediaryofyj/7-11-7-13-Docker-6d481f94231a4d28ad69cead7558f2ee)<br>
+
+<br>
+
+## 👣 Footprints of Development
+<a href="https://www.notion.so/thediaryofyj/Restframework-6ddc4152bfe747b8942c0ed86ee397c6">
+ <img src="https://img.shields.io/badge/Notion-000000?style=flat-square&logo=Notion&link=https://www.notion.so/thediaryofyj/Restframework-6ddc4152bfe747b8942c0ed86ee397c6"/>
+</a> 
