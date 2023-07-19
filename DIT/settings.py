@@ -25,7 +25,7 @@ credentials = json.loads(open(CREDENTIAL_FILE).read())
 SECRET_KEY = credentials["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -133,9 +133,9 @@ LOGOUT_REDIRECT_URL = 'main'
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'DIT', 'static'),
+    os.path.join(BASE_DIR, 'DIT', 'static')
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
